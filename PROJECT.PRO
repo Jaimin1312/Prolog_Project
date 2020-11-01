@@ -1,12 +1,17 @@
 domains
 Name,Company,Category,Sub_Category,Sel_Item=symbol
 Price=integer
+prodi = prodi(symbol,symbol,symbol,integer) 
+list=symbol*
 
 database
 itemdatabase(Name,Company,Category,Sub_Category,Price) 
+itemdatabase2(Name,prodi)
+
 
 predicates
 items(Name,Company,Category,Sub_Category,Price)
+
 start
 sameprice(symbol)
 samecategory(symbol)
@@ -20,16 +25,19 @@ add(char,integer)
 max(integer,integer,integer)
 min(integer,integer,integer)
 list(integer)
-
+compoundcheck(integer)
+finditem(list,symbol)
 clauses
-start:-write("----Options----"),nl,
+start:-clearwindow(),
+write("----Options----"),nl,
 write("1.Suggestions for your item"),nl,
 write("2.Total of each (Sub Category)"),nl,
 write("3.find item according to your price "),nl,
 write("4. Add item to cart"),nl,
 write("5. Maximum and Minimum total selling of all item from 2017 to 2019"),nl,
 write("6. compound object used here"),nl,
-write("7. Perform in Database operation"),nl,
+write("7. Find item is in list or not"),nl,
+write("8. Perform in Database operation"),nl,
 readint(X),project(X).
 
 
@@ -55,7 +63,9 @@ project(3):-write("1. find item under your price and particular category"),nl,
 write("2. find more costly price item"),nl,
 readint(Priceop),PricesubOption(Priceop).
 
-project(7):-write("1. Enter new Product Details"),nl,
+project(7):-write("Enter Item name:"),readln(A),finditem([Maggie,YiPPee,Holidays,cheeses,milk],A),fail.
+
+project(8):-write("1. Enter new Product Details"),nl,
 write("2. Delete a Product Details"),nl,
 write("3. Display All Product Details"),nl,
 write("4. Display list of all Procuct :"),nl,
@@ -63,19 +73,35 @@ write("Enter choice : "),
 readInt(In),
 list(In).
 
+
 project(5):-write("Enter total selling price in 2017:"),readint(Q1),
 write("Enter total selling price in year 2018 :"),readint(Q2),
 write("Enter total selling price in year 2019:"),readint(Q3),
 write("Maximum total selling price from 2017 to 2019 is"),max(Q1,Q2,Q3),
 write("Minimum total selling price from 2017 to 2019 is"),min(Q1,Q2,Q3),nl.
 
+project(6):-write("1. Enter item Details"),nl,
+write("2. Display item Details"),nl,
+readInt(Compundobj),
+compoundcheck(Compundobj).
+
 project(4):-write("You can start adding item to cart"),nl,add('y',0).
 add('n',F):-write("-----CART-----"),nl,write("Total amount of your cart item price:",F),nl.
 add('y',B):-write("enter name of your item: "),readln(C),nl,
 items(C,_,_,_,D),T=B+D,write("Continue??(y/n): "),readchar(E),nl,add(E,T). 
 
+finditem([],_):-!,write("Item is not in list"),nl.
+finditem([L|_],L):-!,write("Item found in our list"),nl.
+finditem([_|Tail],B):-finditem(Tail,B).
+
+compoundcheck(1):-write("Item name:"),readln(P),nl,write("Enter Company name:"),readln(M),nl,
+write("Enter Category name:"),readln(L),nl,
+ write("Enter Sub_Category:"),readln(S),nl,write("price:"),readint(C),assertz(itemdatabase2(P,prodi(M,L,S,C))),
+ nl,write("added successfully. Continue? "),readchar(W),W='y',project(6). 
 
 
+compoundcheck(2):-itemdatabase2(P,prodi(M,L,S,C)),write("Item:",P," Company:",M," Category:",L," Sub_Category:",S," price:",C),nl,fail.
+compoundcheck(2):-write("Continue? "),readchar(W),nl,W='y',project(6). 
 
 Subcategoryoption(1):-write("Maggie price 15"),nl,
 write("YiPPee price 15"),nl,
@@ -167,3 +193,11 @@ items("eggs","Himalay","Food","Dairy",90).
 items("milk","Amul","Food","Dairy",18).
 items("yogurt","Amul","Food","Dairy",30).
 items("butter","Amul","Food","Dairy",50).
+items("Apple","Matson","Food","Fruits",90).
+items("Pears","Matson","Food","Fruits",80).
+items("Cherries","Matson","Food","Fruits",70).
+items("Blueberries","Matson","Food","Fruits",50).
+items("cabbage","Freshone","Food","vegetable",50).
+items("pumpkin","Freshone","Food","vegetable",60).
+items("potato","Freshone","Food","vegetable",75).
+items("onion","Freshone","Food","vegetable",25).
